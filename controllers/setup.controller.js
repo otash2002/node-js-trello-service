@@ -1,5 +1,16 @@
 // controllers/setup.controller.js
 import { pool } from "../config/db.js";
+import { createTables } from "../services/setup.service.js";
+
+
+export const setUpDatabase = async (req, res) => {
+  try {
+    const result = await createTables();
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Bazani yaratishda xatolik", error });
+  }
+};
 
 export const setupDatabase = async (req, res) => {
   try {

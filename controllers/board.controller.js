@@ -4,7 +4,9 @@ import { pool } from "../config/db.js";
 // GET /boards - barcha doskalarni olish
 export const getAllBoards = async (req, res) => {
   try {
-    const result = await pool.query("SELECT id, name, description, user_id, created_at FROM boards");
+    const result = await pool.query(
+      "SELECT id, name, description, user_id, created_at FROM boards"
+    );
     res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
@@ -20,7 +22,8 @@ export const getBoardById = async (req, res) => {
       "SELECT id, name, description, user_id, created_at FROM boards WHERE id=$1",
       [boardId]
     );
-    if (result.rows.length === 0) return res.status(404).json({ message: "Doska topilmadi" });
+    if (result.rows.length === 0)
+      return res.status(404).json({ message: "Doska topilmadi" });
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -39,7 +42,9 @@ export const createBoard = async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Doska yaratishda xatolik", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Doska yaratishda xatolik", error: err.message });
   }
 };
 
@@ -52,11 +57,14 @@ export const updateBoard = async (req, res) => {
       "UPDATE boards SET name=$1, description=$2 WHERE id=$3 RETURNING id, name, description, user_id, created_at",
       [name, description, boardId]
     );
-    if (result.rows.length === 0) return res.status(404).json({ message: "Doska topilmadi" });
+    if (result.rows.length === 0)
+      return res.status(404).json({ message: "Doska topilmadi" });
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Doska yangilashda xatolik", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Doska yangilashda xatolik", error: err.message });
   }
 };
 
@@ -67,11 +75,19 @@ export const deleteBoard = async (req, res) => {
     // Board o‘chirilganda tasklari ham o‘chadi
     await pool.query("DELETE FROM tasks WHERE board_id=$1", [boardId]);
 
-    const result = await pool.query("DELETE FROM boards WHERE id=$1 RETURNING id, name", [boardId]);
-    if (result.rows.length === 0) return res.status(404).json({ message: "Doska topilmadi" });
-    res.status(200).json({ message: "Doska o‘chirildi", board: result.rows[0] });
+    const result = await pool.query(
+      "DELETE FROM boards WHERE id=$1 RETURNING id, name",
+      [boardId]
+    );
+    if (result.rows.length === 0)
+      return res.status(404).json({ message: "Doska topilmadi" });
+    res
+      .status(200)
+      .json({ message: "Doska ochirildi", board: result.rows[0] });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Doska o‘chirishda xatolik", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Doska ochirishda xatolik", error: err.message });
   }
 };

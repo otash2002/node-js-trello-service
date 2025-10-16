@@ -16,3 +16,4 @@ export const pool = new Pool({
 pool.connect()
   .then(() => console.log(" PostgreSQL bilan muvaffaqiyatli ulandi"))
   .catch((err) => console.error(" Baza bilan ulanishda xatolik:", err));
+  export default pool

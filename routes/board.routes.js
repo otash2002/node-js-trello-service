@@ -10,7 +10,12 @@ import {
 
 import { authMiddleware } from "../middleware/auth.js";
 
-const router = Router();
+import { validate } from "../middleware/validation.middleware.js";
+import { createBoardValidation, updateBoardValidation } from "../validation/board.validation.js";
+
+const router = Router();  //boardlar faqat login userlar uchun bo‘lsa
+
+router.use(authMiddleware);
 
 router.get("/boards", authMiddleware, getAllBoards);
 router.get("/boards/:boardId", authMiddleware, getBoardById);

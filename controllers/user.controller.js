@@ -61,3 +61,60 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Xatolik yuz berdi", error: err.message });
   }
 };
+
+
+
+
+// 🧠 Foydalanuvchilarni sahifalab va qidiruv bilan olish
+export const getAllUsersearch = async (req, res) => {
+  try {
+    let { page = 1, limit = 10, search = "" } = req.query;
+
+    // Parametrlarni sonlarga aylantiramiz
+    page = Number(page);
+    limit = Number(limit);
+
+    if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+      return res.status(400).json({ message: "Notogri sahifa yoki limit qiymati" });
+    }
+
+    const offset = (page - 1) * limit;
+    const searchQuery = `%${search}%`;
+
+    // Asosiy foydalanuvchilarni olish
+    const result = await pool.query(
+      `
+      SELECT id, username, email, created_at
+      FROM users
+      WHERE username ILIKE $1 OR email ILIKE $1
+      ORDER BY id ASC
+      LIMIT $2 OFFSET $3
+      `,
+      [searchQuery, limit, offset]
+    );
+
+    // Umumiy sonini olish
+    const totalResult = await pool.query(
+      `
+      SELECT COUNT(*) AS total
+      FROM users
+      WHERE username ILIKE $1 OR email ILIKE $1
+      `,
+      [searchQuery]
+    );
+
+    const total = Number(totalResult.rows[0].total);
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+      total,
+      page,
+      limit,
+      totalPages,
+      users: result.rows,
+    });
+  } catch (error) {
+    console.error("Foydalanuvchilarni olishda xatolik:", error.message);
+    res.status(500).json({ message: "Server xatosi", error: error.message });
+  }
+};

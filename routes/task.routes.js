@@ -10,7 +10,13 @@ import {
 
 import { authMiddleware } from "../middleware/auth.js";
 
+import { validate } from "../middleware/validation.middleware.js";
+import { createTaskValidation, updateTaskValidation } from "../validation/task.validation.js";
 const router = Router({ mergeParams: true });
+
+router.use(authMiddleware);
+
+
 
 router.get("/boards/:boardId/tasks", authMiddleware, getTasksByBoard);
 router.get("/boards/:boardId/tasks/:taskId", authMiddleware, getTaskById);

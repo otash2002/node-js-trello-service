@@ -15,7 +15,7 @@ export const authMiddleware = (req, res, next) => {
     // Bearer <token>
     const token = authHeader.split(" ")[1];
     if (!token) {
-      return res.status(401).json({ message: "Token noto‘g‘ri" });
+      return res.status(401).json({ message: "Token notogri" });
     }
 
     // Tokenni tekshirish
@@ -27,3 +27,6 @@ export const authMiddleware = (req, res, next) => {
     res.status(401).json({ message: "Token tekshirishda xatolik" });
   }
 };
+
+export default authMiddleware;
+
